@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Campus — مساعد الطالب الجامعي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f5f3ef;
+      --bg-elevated: #ffffff;
+      --bg-sidebar: #ebe8e2;
+      --text: #1a1a1a;
+      --text-secondary: #5c5c5c;
+      --text-muted: #8a8a8a;
+      --border: #e5e2dc;
+      --border-strong: #d4d0c8;
+      --accent: #d97757;
+      --accent-soft: #f5e6e0;
+      --accent-hover: #c45d3a;
+      --purple: #7c6bf0;
+      --purple-soft: #eeeaff;
+      --green: #3d9a6a;
+      --green-soft: #e6f5ee;
+      --radius: 14px;
+      --radius-sm: 10px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+      --shadow-lg: 0 4px 24px rgba(0,0,0,0.06);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15.5px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: var(--bg-sidebar);
+      border-left: 1px solid var(--border);
+      padding: 1.4rem 1rem;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.4rem 0.6rem 1.4rem;
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #d97757, #c45d3a);
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 0.95rem;
+    }
+
+    .nav-section { margin-bottom: 1.6rem; }
+
+    .nav-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0 0.7rem 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: 9px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: right;
+      font-family: inherit;
+    }
+
+    .nav-item:hover {
+      background: rgba(0,0,0,0.04);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: var(--bg-elevated);
+      color: var(--text);
+      box-shadow: var(--shadow);
+    }
+
+    .nav-item span.icon {
+      font-size: 1.05rem;
+      width: 22px;
+      text-align: center;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      padding: 1rem 1.8rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar h1 {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .content {
+      flex: 1;
+      padding: 1.8rem;
+      max-width: 920px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .welcome {
+      text-align: center;
+      padding: 2.5rem 1rem 3rem;
+    }
+
+    .welcome-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--accent-soft);
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 1.6rem;
+      margin: 0 auto 1.3rem;
+    }
+
+    .welcome h2 {
+      font-size: 1.7rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.02em;
+    }
+
+    .welcome p {
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin: 0 auto 1.8rem;
+      font-size: 1rem;
+    }
+
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+    }
+
+    .chip {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.5rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .chip:hover {
+      border-color: var(--border-strong);
+      color: var(--text);
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.9rem;
+      margin-top: 2.2rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.9rem;
+    }
+
+    .card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.18s;
+      text-align: right;
+    }
+
+    .card:hover {
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 1.15rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .card h3 {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .card p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .tool-view {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tool-view.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 1.4rem;
+      font-family: inherit;
+      padding: 0.3rem 0;
+    }
+
+    .back-btn:hover { color: var(--text); }
+
+    .tool-header { margin-bottom: 1.6rem; }
+
+    .tool-header h2 {
+      font-size: 1.45rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .tool-header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .input-area {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    textarea, input[type="text"], select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: var(--bg);
+      resize: vertical;
+      margin-bottom: 0.8rem;
+      transition: border-color 0.15s;
+    }
+
+    textarea:focus, input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1.3rem;
+      border-radius: 10px;
+      font-weight: 560;
+      font-size: 0.92rem;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .result-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.3rem;
+      min-height: 120px;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      box-shadow: var(--shadow);
+    }
+
+    .result-box.has-content { color: var(--text); }
+
+    .features-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .feature-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.95rem 1.1rem;
+      transition: border-color 0.15s;
+    }
+
+    .feature-row:hover { border-color: var(--border-strong); }
+
+    .feature-num {
+      min-width: 28px;
+      height: 28px;
+      background: var(--bg);
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .feature-row h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+
+    .feature-row p {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0.3rem;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.25);
+      z-index: 40;
+    }
+
+    .overlay.show { display: block; }
+
+    @media (max-width: 820px) {
+      .sidebar {
+        position: fixed;
+        right: -280px;
+        z-index: 50;
+        transition: right 0.25s ease;
+        box-shadow: -4px 0 24px rgba(0,0,0,0.08);
+      }
+      .sidebar.open { right: 0; }
+      .mobile-toggle { display: block; }
+      .content { padding: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <a href="#" class="logo" onclick="showHome(); return false;">
+        <div class="logo-mark">✦</div>
+        AI Campus
+      </a>
+
+      <div class="nav-section">
+        <div class="nav-label">الرئيسية</div>
+        <button class="nav-item active" data-view="home" onclick="showHome()">
+          <span class="icon">🏠</span> الرئيسية
+        </button>
+        <button class="nav-item" data-view="features" onclick="showFeatures()">
+          <span class="icon">✨</span> كل الميزات (50)
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">أدوات الدراسة</div>
+        <button class="nav-item" onclick="openTool('summarizer')">
+          <span class="icon">📄</span> تلخيص محاضرة
+        </button>
+        <button class="nav-item" onclick="openTool('explain')">
+          <span class="icon">💡</span> شرح مفهوم
+        </button>
+        <button class="nav-item" onclick="openTool('quiz')">
+          <span class="icon">❓</span> مولّد أسئلة
+        </button>
+        <button class="nav-item" onclick="openTool('flashcards')">
+          <span class="icon">🃏</span> بطاقات تذكر
+        </button>
+        <button class="nav-item" onclick="openTool('schedule')">
+          <span class="icon">📅</span> جدول دراسي
+        </button>
+        <button class="nav-item" onclick="openTool('review')">
+          <span class="icon">🎯</span> خطة مراجعة
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">الكتابة والبحث</div>
+        <button class="nav-item" onclick="openTool('paraphrase')">
+          <span class="icon">🔄</span> إعادة صياغة
+        </button>
+        <button class="nav-item" onclick="openTool('intro')">
+          <span class="icon">📝</span> مقدمة بحث
+        </button>
+        <button class="nav-item" onclick="openTool('grammar')">
+          <span class="icon">✅</span> تدقيق لغوي
+        </button>
+        <button class="nav-item" onclick="openTool('email')">
+          <span class="icon">✉️</span> إيميل رسمي
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">أخرى</div>
+        <button class="nav-item" onclick="openTool('project')">
+          <span class="icon">🚀</span> أفكار مشاريع
+        </button>
+        <button class="nav-item" onclick="openTool('points')">
+          <span class="icon">📋</span> نقاط ← فقرة
+        </button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+        <h1 id="pageTitle">AI Campus</h1>
+        <div style="width:32px"></div>
+      </div>
+
+      <div class="content">
+        <div id="view-home" class="tool-view active">
+          <div class="welcome">
+            <div class="welcome-icon">✦</div>
+            <h2>كيف أقدر أساعدك اليوم؟</h2>
+            <p>منصة ذكاء اصطناعي مصممة خصيصاً لطلبة الجامعات. اختر أداة أو ابدأ مباشرة.</p>
+            <div class="quick-actions">
+              <button class="chip" onclick="openTool('summarizer')">📄 لخّص محاضرة</button>
+              <button class="chip" onclick="openTool('quiz')">❓ أنشئ أسئلة</button>
+              <button class="chip" onclick="openTool('explain')">💡 اشرح لي</button>
+              <button class="chip" onclick="openTool('schedule')">📅 جدول دراسي</button>
+              <button class="chip" onclick="openTool('paraphrase')">🔄 أعد صياغة</button>
+              <button class="chip" onclick="openTool('email')">✉️ اكتب إيميل</button>
+            </div>
+          </div>
+
+          <div class="section-title">الأدوات الأكثر استخداماً</div>
+          <div class="cards">
+            <div class="card" onclick="openTool('summarizer')">
+              <div class="card-icon" style="background:var(--accent-soft)">📄</div>
+              <h3>تلخيص المحاضرات</h3>
+              <p>حوّل أي محاضرة طويلة إلى نقاط واضحة ومنظمة</p>
+            </div>
+            <div class="card" onclick="openTool('quiz')">
+              <div class="card-icon" style="background:var(--purple-soft)">❓</div>
+              <h3>مولّد الأسئلة</h3>
+              <p>أنشئ أسئلة متنوعة بأي مستوى صعوبة</p>
+            </div>
+            <div class="card" onclick="openTool('explain')">
+              <div class="card-icon" style="background:var(--green-soft)">💡</div>
+              <h3>شرح المفاهيم</h3>
+              <p>اشرح أي موضوع بأسلوب مبسط يناسبك</p>
+            </div>
+            <div class="card" onclick="openTool('paraphrase')">
+              <div class="card-icon" style="background:#e8f0fe">🔄</div>
+              <h3>إعادة الصياغة</h3>
+              <p>أعد كتابة النصوص بأسلوب أكاديمي سليم</p>
+            </div>
+            <div class="card" onclick="openTool('schedule')">
+              <div class="card-icon" style="background:#fef3e8">📅</div>
+              <h3>الجدول الدراسي</h3>
+              <p>نظّم وقتك وموادك في خطة أسبوعية</p>
+            </div>
+            <div class="card" onclick="openTool('flashcards')">
+              <div class="card-icon" style="background:#fce8f3">🃏</div>
+              <h3>بطاقات التذكر</h3>
+              <p>أنشئ بطاقات مراجعة سريعة وفعالة</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-features" class="tool-view">
+          <div class="tool-header">
+            <h2>جميع الميزات (50)</h2>
+            <p>كل ميزة مصممة لتساعدك في رحلتك الجامعية</p>
+          </div>
+          <div class="features-list" id="featuresList"></div>
+        </div>
+
+        <div id="view-tool" class="tool-view">
+          <button class="back-btn" onclick="showHome()">← رجوع</button>
+          <div class="tool-header">
+            <h2 id="toolTitle">الأداة</h2>
+            <p id="toolDesc">الوصف</p>
+          </div>
+          <div class="input-area" id="toolInputs"></div>
+          <button class="btn btn-primary" id="toolBtn" onclick="runCurrentTool()" style="width:100%;margin-bottom:1rem">
+            تنفيذ
+          </button>
+          <div class="result-box" id="toolResult">النتيجة ستظهر هنا...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const features = [
+      {t:"تلخيص المحاضرات", d:"لخص أي محاضرة أو فصل في نقاط واضحة"},
+      {t:"شرح المفاهيم الصعبة", d:"اشرح أي موضوع بطريقة مبسطة"},
+      {t:"خرائط ذهنية ذكية", d:"حوّل الدرس إلى خريطة ذهنية مرتبة"},
+      {t:"تحويل الصوت إلى نص", d:"سجّل المحاضرة وحوّلها لنص"},
+      {t:"شرح بالأمثلة", d:"اطلب أمثلة واقعية لأي مفهوم"},
+      {t:"مقارنة النظريات", d:"قارن بين مفهومين بسهولة"},
+      {t:"أسئلة الفهم", d:"أنشئ أسئلة تتحقق من فهمك"},
+      {t:"ملخصات سريعة", d:"ملخص مركز قبل الاختبار"},
+      {t:"إعادة صياغة أكاديمية", d:"أعد صياغة النصوص بأسلوب علمي"},
+      {t:"اقتراح مراجع", d:"اقترح مصادر موثوقة لبحثك"},
+      {t:"تنسيق الاقتباسات", d:"نسّق حسب APA أو MLA"},
+      {t:"تدقيق لغوي", d:"صحح الأخطاء النحوية والإملائية"},
+      {t:"تحسين أسلوب الكتابة", d:"ارفع مستوى كتابتك الأكاديمية"},
+      {t:"كتابة مقدمة وخاتمة", d:"أنشئ مقدمة وخاتمة احترافية"},
+      {t:"كشف التشابه", d:"تحقق من نسبة التشابه"},
+      {t:"تلخيص الأوراق البحثية", d:"لخص أي ورقة علمية"},
+      {t:"جدول دراسي ذكي", d:"أنشئ جدولاً حسب موادك"},
+      {t:"تذكير بالمواعيد", d:"ذكّرك بمواعيد التسليم"},
+      {t:"تقسيم المهام", d:"قسّم المشروع إلى خطوات"},
+      {t:"تتبع التقدم", d:"تابع نسبة إنجازك"},
+      {t:"تقنية بومودورو", d:"مؤقت تركيز مع استراحات"},
+      {t:"قائمة أولويات", d:"رتّب مهامك حسب الأهمية"},
+      {t:"تحليل وقت الدراسة", d:"اعرف أين يضيع وقتك"},
+      {t:"مولّد الأسئلة", d:"أنشئ أسئلة متنوعة من أي درس"},
+      {t:"اختبارات وهمية", d:"اختبار مشابه للحقيقي"},
+      {t:"بطاقات تذكر", d:"بطاقات للمراجعة السريعة"},
+      {t:"تحليل نقاط الضعف", d:"اكتشف المواضيع الضعيفة"},
+      {t:"شرح الحلول", d:"افهم حل المسائل خطوة بخطوة"},
+      {t:"أسئلة سابقة", d:"تدرب على سنوات سابقة"},
+      {t:"خطة مراجعة نهائية", d:"خطة لآخر أسبوع"},
+      {t:"بناء السيرة الذاتية", d:"سيرة ذاتية احترافية"},
+      {t:"تحضير للمقابلات", d:"تدرب على أسئلة المقابلات"},
+      {t:"فرص تدريب", d:"اكتشف مجالات تدريب"},
+      {t:"خطاب تقديم", d:"اكتب Cover Letter مميز"},
+      {t:"تحليل سوق العمل", d:"المهارات المطلوبة في تخصصك"},
+      {t:"تحسين LinkedIn", d:"حسّن ملفك المهني"},
+      {t:"إدارة ضغط الاختبارات", d:"تقنيات لتخفيف التوتر"},
+      {t:"تحفيز يومي", d:"رسائل تحفيزية مخصصة"},
+      {t:"تمارين تركيز", d:"تمارين قصيرة للتركيز"},
+      {t:"توازن الدراسة والحياة", d:"نصائح لتحقيق التوازن"},
+      {t:"تتبع المزاج", d:"سجل مزاجك واحصل على اقتراحات"},
+      {t:"شرح الكود", d:"افهم أي كود سطراً بسطر"},
+      {t:"تصحيح الأخطاء", d:"اكتشف أخطاء الكود"},
+      {t:"تحويل بين اللغات", d:"حوّل الكود من لغة لأخرى"},
+      {t:"اقتراح مشاريع تخرج", d:"أفكار مشاريع مناسبة"},
+      {t:"شرح الخوارزميات", d:"افهم الخوارزميات ببساطة"},
+      {t:"ترجمة أكاديمية", d:"ترجم نصوصاً علمية بدقة"},
+      {t:"تحسين العروض", d:"هيكل أفضل لعرضك"},
+      {t:"محاكاة محادثة إنجليزية", d:"تدرب على سياقات أكاديمية"},
+      {t:"كتابة إيميلات رسمية", d:"إيميل لائق للدكتور أو الإدارة"}
+    ];
+
+    const tools = {
+      summarizer: {
+        title: "تلخيص المحاضرات",
+        desc: "الصق نص المحاضرة أو الدرس وسأحوله إلى ملخص منظم وواضح.",
+        inputs: '<textarea id="t-input" rows="6" placeholder="الصق نص المحاضرة هنا..."></textarea>',
+        run: function() {
+          var v = val('t-input');
+          if (!v) return "الرجاء إدخال نص أولاً.";
+          var parts = v.split(/[.؟!\n]+/).map(function(s){return s.trim()}).filter(function(s){return s.length > 20});
+          if (parts.length === 0) return "النص قصير جداً. حاول إدخال محتوى أطول.";
+          var selected = parts.slice(0, Math.min(5, parts.length));
+          return "📌 الملخص:\n\n" + selected.map(function(s,i){return (i+1)+". "+s+"."}).join("\n");
+        }
+      },
+      explain: {
+        title: "شرح مفهوم",
+        desc: "اكتب المفهوم أو الموضوع اللي تبي تشرحه بأسلوب مبسط.",
+        inputs: '<input type="text" id="t-input" placeholder="مثال: التفاضل، النظام الشمسي، الخوارزميات..." /><select id="t-level"><option>مبسط جداً</option><option selected>مناسب للجامعة</option><option>متقدم</option></select>',
+        run: function() {
+          var topic = val('t-input') || "المفهوم";
+          var level = val('t-level');
+          return "💡 شرح \""+topic+"\" بأسلوب "+level+":\n\n" +
+            "يُقصد بـ\""+topic+"\" الفكرة أو المبدأ الأساسي الذي يُبنى عليه فهم أعمق للموضوع.\n\n" +
+            "• التعريف: هو الإطار النظري أو العملي الذي يصف كيف يعمل هذا المفهوم.\n" +
+            "• أهميته: يساعد في فهم الظواهر المرتبطة به وتطبيقها في سياقات مختلفة.\n" +
+            "• مثال مبسط: تخيل أن "+topic+" يشبه أداة تساعدك على تنظيم المعلومات أو حل مشكلة معينة.\n\n" +
+            "إذا احتجت شرح أعمق أو أمثلة إضافية، قل لي.";
+        }
+      },
+      quiz: {
+        title: "مولّد الأسئلة",
+        desc: "أنشئ أسئلة متنوعة حول أي موضوع دراسي.",
+        inputs: '<input type="text" id="t-input" placeholder="موضوع الدرس (مثال: الجهاز الدوري)" /><select id="t-level"><option>سهل</option><option selected>متوسط</option><option>صعب</option></select>',
+        run: function() {
+          var topic = val('t-input') || "الموضوع";
+          var level = val('t-level');
+          return "❓ أسئلة بمستوى "+level+" حول: "+topic+"\n\n" +
+            "1. ما هو التعريف الأساسي لـ\""+topic+"\"؟\n" +
+            "2. اذكر أهم الخصائص أو المكونات المرتبطة بـ"+topic+".\n" +
+            "3. كيف يمكن تطبيق مفهوم "+topic+" في الحياة العملية أو التخصص؟\n" +
+            "4. ما العلاقة بين "+topic+" والمفاهيم القريبة منه؟\n" +
+            "5. حلّل أهمية "+topic+" في السياق الأكاديمي أو العلمي.\n\n" +
+            "💡 نصيحة: حاول الإجابة أولاً ثم راجع المصادر.";
+        }
+      },
+      flashcards: {
+        title: "بطاقات التذكر",
+        desc: "أنشئ بطاقات مراجعة سريعة من موضوعك.",
+        inputs: '<input type="text" id="t-input" placeholder="الموضوع (مثال: مصطلحات علم النفس)" /><textarea id="t-extra" rows="3" placeholder="اختياري: الصق نقاط أو تعريفات..."></textarea>',
+        run: function() {
+          var topic = val('t-input') || "الموضوع";
+          return "🃏 بطاقات تذكر — "+topic+"\n\n" +
+            "البطاقة 1\nالوجه: ما هو تعريف "+topic+"؟\nالظهر: [اكتب التعريف هنا بعد المراجعة]\n\n" +
+            "البطاقة 2\nالوجه: ما أهم استخدامات أو تطبيقات "+topic+"؟\nالظهر: [اذكر 2-3 نقاط]\n\n" +
+            "البطاقة 3\nالوجه: ما الفرق بين "+topic+" والمفاهيم المشابهة؟\nالظهر: [وضح الفرق]\n\n" +
+            "البطاقة 4\nالوجه: مثال واقعي على "+topic+"\nالظهر: [مثال من الحياة أو التخصص]\n\n" +
+            "💡 استخدمها بالمراجعة المتباعدة (Spaced Repetition).";
+        }
+      },
+      schedule: {
+        title: "الجدول الدراسي",
+        desc: "أنشئ خطة أسبوعية منظمة حسب موادك ووقتك المتاح.",
+        inputs: '<input type="text" id="t-input" placeholder="المواد (افصل بفاصلة): رياضيات، فيزياء، برمجة" /><input type="text" id="t-hours" placeholder="ساعات الدراسة المتاحة يومياً (مثال: 4)" />',
+        run: function() {
+          var subjects = val('t-input');
+          var hours = val('t-hours') || "3";
+          if (!subjects) return "اكتب المواد أولاً.";
+          var list = subjects.split(/[,،]/).map(function(s){return s.trim()}).filter(Boolean);
+          var days = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس"];
+          var out = "📅 جدول مقترح — "+hours+" ساعات يومياً\n\n";
+          days.forEach(function(d,i) {
+            out += d+": "+list[i % list.length]+"  •  "+hours+" ساعات\n";
+          });
+          out += "\nالجمعة: مراجعة شاملة + حل تمارين\nالسبت: راحة أو مراجعة خفيفة\n\n💡 خصص أول ساعة للمادة الأصعب.";
+          return out;
+        }
+      },
+      review: {
+        title: "خطة مراجعة قبل الاختبار",
+        desc: "أنشئ خطة مراجعة منظمة لآخر أيام قبل الاختبار.",
+        inputs: '<input type="text" id="t-input" placeholder="اسم المادة" /><input type="text" id="t-days" placeholder="كم يوم باقي على الاختبار؟" />',
+        run: function() {
+          var subject = val('t-input') || "المادة";
+          var days = parseInt(val('t-days')) || 5;
+          var out = "🎯 خطة مراجعة: "+subject+" — "+days+" أيام\n\n";
+          if (days <= 2) {
+            out += "اليوم 1: مراجعة الملخصات + حل أهم الأسئلة\nاليوم 2: اختبار وهمي + تركيز على النقاط الضعيفة\n\n⚡ الوقت ضيق، ركز على الأفكار الرئيسية فقط.";
+          } else {
+            out += "الأيام الأولى: قراءة سريعة لكل الفصول + تحديد النقاط الصعبة\n";
+            out += "الأيام الوسطى: حل تمارين وأسئلة + بطاقات تذكر\n";
+            out += "اليوم قبل الأخير: اختبار وهمي كامل\n";
+            out += "اليوم الأخير: مراجعة سريعة للملخصات فقط + راحة جيدة\n\n";
+            out += "💡 لا تدرس مادة جديدة في آخر يوم.";
+          }
+          return out;
+        }
+      },
+      paraphrase: {
+        title: "إعادة الصياغة",
+        desc: "أعد كتابة النص بأسلوب أكاديمي أفضل مع الحفاظ على المعنى.",
+        inputs: '<textarea id="t-input" rows="5" placeholder="الصق النص هنا..."></textarea>',
+        run: function() {
+          var v = val('t-input');
+          if (!v) return "أدخل نصاً أولاً.";
+          var text = v
+            .replace(/يعتبر/g, "يُعدّ")
+            .replace(/مهم جداً/g, "بالغ الأهمية")
+            .replace(/كثير من/g, "عدد كبير من")
+            .replace(/يجب أن/g, "ينبغي أن")
+            .replace(/يمكن أن/g, "من الممكن أن")
+            .replace(/جيد/g, "متميز")
+            .replace(/الناس/g, "الأفراد");
+          return "✨ الصياغة المحسّنة:\n\n"+text+"\n\n—\nتم تحسين الأسلوب مع الحفاظ على المعنى الأصلي.";
+        }
+      },
+      intro: {
+        title: "كتابة مقدمة بحث",
+        desc: "أنشئ مقدمة أكاديمية مناسبة لموضوع بحثك.",
+        inputs: '<input type="text" id="t-input" placeholder="عنوان أو موضوع البحث" /><textarea id="t-extra" rows="2" placeholder="اختياري: نقاط تريد تضمينها..."></textarea>',
+        run: function() {
+          var topic = val('t-input') || "الموضوع";
+          return "📝 مقدمة مقترحة حول: "+topic+"\n\n" +
+            "يُعدّ موضوع \""+topic+"\" من الموضوعات المهمة التي حظيت باهتمام متزايد في الأوساط الأكاديمية والبحثية. " +
+            "وتبرز أهمية دراسته في ظل التطورات المتسارعة التي يشهدها هذا المجال، وما يترتب عليها من تحديات وفرص.\n\n" +
+            "تهدف هذه الدراسة إلى تسليط الضوء على الجوانب الأساسية المرتبطة بـ"+topic+"، " +
+            "مع التركيز على تحليل أبعاده المختلفة وتقديم رؤية واضحة تسهم في إثراء المعرفة حوله.\n\n" +
+            "وتنطلق الدراسة من تساؤل رئيس مفاده: ما أبرز الأبعاد والمضامين التي ينطوي عليها "+topic+" في السياق الحالي؟";
+        }
+      },
+      grammar: {
+        title: "تدقيق لغوي",
+        desc: "راجع النص وصحح الأخطاء الإملائية والنحوية الشائعة.",
+        inputs: '<textarea id="t-input" rows="5" placeholder="الصق النص للتدقيق..."></textarea>',
+        run: function() {
+          var v = val('t-input');
+          if (!v) return "أدخل نصاً أولاً.";
+          var text = v
+            .replace(/ان /g, "أن ")
+            .replace(/لاكن/g, "لكن")
+            .replace(/هذة/g, "هذه")
+            .replace(/هاذا/g, "هذا")
+            .replace(/ضن/g, "ظن")
+            .replace(/اضن/g, "أظن");
+          return "✅ النص بعد التدقيق:\n\n"+text+"\n\n—\nتم تصحيح الأخطاء الشائعة. راجع النص مرة أخرى للتأكد.";
+        }
+      },
+      email: {
+        title: "كتابة إيميل رسمي",
+        desc: "اكتب إيميلاً لائقاً للدكتور أو إدارة الكلية.",
+        inputs: '<input type="text" id="t-to" placeholder="إلى من؟ (مثال: د. أحمد)" /><input type="text" id="t-input" placeholder="الموضوع (مثال: طلب تمديد تسليم)" /><textarea id="t-extra" rows="2" placeholder="تفاصيل إضافية..."></textarea>',
+        run: function() {
+          var to = val('t-to') || "الدكتور";
+          var subject = val('t-input') || "استفسار";
+          var extra = val('t-extra');
+          return "✉️ إيميل رسمي\n\n" +
+            "الموضوع: "+subject+"\n\n" +
+            "السلام عليكم ورحمة الله وبركاته،\n\n" +
+            "الأستاذ "+to+" المحترم،\n\n" +
+            "أتقدم إليكم بهذا الإيميل بخصوص "+subject+". " +
+            (extra ? extra+" " : "") +
+            "آمل منكم التكرم بالنظر في الطلب، وسأكون شاكراً لتوجيهاتكم.\n\n" +
+            "وتفضلوا بقبول فائق الاحترام والتقدير،\n" +
+            "[اسمك]\n[رقمك الجامعي]\n[التخصص]";
+        }
+      },
+      project: {
+        title: "أفكار مشاريع تخرج",
+        desc: "اقترح أفكار مشاريع مناسبة لتخصصك.",
+        inputs: '<input type="text" id="t-input" placeholder="تخصصك (مثال: علوم حاسب، إدارة أعمال...)" /><select id="t-level"><option>مشروع بسيط</option><option selected>متوسط</option><option>متقدم</option></select>',
+        run: function() {
+          var major = val('t-input') || "التخصص";
+          var level = val('t-level');
+          return "🚀 أفكار مشاريع ("+level+") — "+major+"\n\n" +
+            "1. نظام ذكي لإدارة [مشكلة شائعة في "+major+"]\n" +
+            "2. تطبيق يساعد الطلبة في [جانب مرتبط بـ"+major+"]\n" +
+            "3. تحليل بيانات حول [ظاهرة مرتبطة بالتخصص]\n" +
+            "4. منصة تعليمية مصغرة تركز على "+major+"\n" +
+            "5. أداة أتمتة لمهام متكررة في مجال "+major+"\n\n" +
+            "💡 اختر فكرة لها قيمة حقيقية ويمكن تنفيذها ضمن الوقت المتاح.";
+        }
+      },
+      points: {
+        title: "تحويل النقاط إلى فقرة",
+        desc: "حوّل قائمة نقاط إلى فقرة أكاديمية متماسكة.",
+        inputs: '<textarea id="t-input" rows="5" placeholder="اكتب النقاط (كل نقطة في سطر)..."></textarea>',
+        run: function() {
+          var v = val('t-input');
+          if (!v) return "أدخل النقاط أولاً.";
+          var points = v.split("\n").map(function(s){return s.replace(/^[-•*\d.]\s*/, "").trim()}).filter(Boolean);
+          if (points.length === 0) return "لم يتم التعرف على نقاط واضحة.";
+          var paragraph = points.join("، كما أن ") + ".";
+          return "📋 الفقرة المُنشأة:\n\n"+paragraph.charAt(0).toUpperCase()+paragraph.slice(1)+"\n\n—\nتم ربط النقاط في نص متماسك.";
+        }
+      }
+    };
+
+    var currentTool = null;
+
+    function val(id) {
+      var el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    }
+
+    function showHome() {
+      hideAll();
+      document.getElementById('view-home').classList.add('active');
+      document.getElementById('pageTitle').textContent = 'AI Campus';
+      setActiveNav('home');
+      closeSidebar();
+    }
+
+    function showFeatures() {
+      hideAll();
+      document.getElementById('view-features').classList.add('active');
+      document.getElementById('pageTitle').textContent = 'كل الميزات';
+      setActiveNav('features');
+      renderFeatures();
+      closeSidebar();
+    }
+
+    function openTool(key) {
+      var tool = tools[key];
+      if (!tool) return;
+      currentTool = key;
+      hideAll();
+      document.getElementById('view-tool').classList.add('active');
+      document.getElementById('pageTitle').textContent = tool.title;
+      document.getElementById('toolTitle').textContent = tool.title;
+      document.getElementById('toolDesc').textContent = tool.desc;
+      document.getElementById('toolInputs').innerHTML = tool.inputs;
+      document.getElementById('toolResult').textContent = 'النتيجة ستظهر هنا...';
+      document.getElementById('toolResult').classList.remove('has-content');
+      setActiveNav(null);
+      closeSidebar();
+    }
+
+    function runCurrentTool() {
+      if (!currentTool || !tools[currentTool]) return;
+      var btn = document.getElementById('toolBtn');
+      var result = document.getElementById('toolResult');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> جاري المعالجة...';
+      result.textContent = 'جاري إعداد النتيجة...';
+      setTimeout(function() {
+        var output = tools[currentTool].run();
+        result.textContent = output;
+        result.classList.add('has-content');
+        btn.disabled = false;
+        btn.textContent = 'تنفيذ';
+      }, 700 + Math.random() * 500);
+    }
+
+    function hideAll() {
+      document.querySelectorAll('.tool-view').forEach(function(v){v.classList.remove('active')});
+    }
+
+    function setActiveNav(view) {
+      document.querySelectorAll('.nav-item').forEach(function(item) {
+        item.classList.toggle('active', item.dataset.view === view);
+      });
+    }
+
+    function renderFeatures() {
+      var list = document.getElementById('featuresList');
+      if (list.children.length > 0) return;
+      features.forEach(function(f, i) {
+        var row = document.createElement('div');
+        row.className = 'feature-row';
+        row.innerHTML = '<div class="feature-num">'+(i+1)+'</div><div><h4>'+f.t+'</h4><p>'+f.d+'</p></div>';
+        list.appendChild(row);
+      });
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('show');
+    }
+
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+    }
+
+    showHome();
+  </script>
+</body>
+</html>
